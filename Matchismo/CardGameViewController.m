@@ -11,7 +11,7 @@
 
 #pragma mark - Properties
 
-#define CARD_COUNT 1
+#define CARD_COUNT 12
 #define CARD_ASPECT_RATIO 0.6
 
 @interface CardGameViewController ()
@@ -43,7 +43,7 @@
 
 #pragma mark - Actions
 
-- (IBAction)deal:(UIButton *)sender {
+- (IBAction)reset:(UIButton *)sender {
     self.game = nil;
     
     [self updateUI];
@@ -61,7 +61,10 @@
 - (void)cardHasBeenFlipped:(CardView *)cardView
 {
     Card *card = (Card *)cardView.card;
-    card.chosen = !card.isChosen;
+//    card.chosen = !card.isChosen;
+    
+    [self.game chooseCard:card];
+//    [self updateUI];
 }
 
 #pragma mark - Draw UI
@@ -84,10 +87,9 @@
 }
 
 // Replace with specific card in concrete class
-// TODO: replacement implementation with "return nil;"
-- (CardView *)createCardViewWithFrame:(CGRect)frame
+- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame
 {
-    return [[CardView alloc] initWithFrame:frame];
+    return nil; // Abstract method to be implemented in concrete class
 }
 
 - (void)updateUI
@@ -106,14 +108,15 @@
             //TODO: Check arithmetic
             Card *card = [self.game cardAtIndex:row*grid.columnCount+column];
             CGRect cardViewFrame = [grid frameOfCellAtRow:row inColumn:column];
-            CardView *cardView = [self createCardViewWithFrame:cardViewFrame];
+            CardView *cardView = [self createCardViewWithCard:card andFrame:cardViewFrame];
             cardView.delegate = self;
-            cardView.card = card;
             [cardView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:cardView action:@selector(tapCard:)]];
             [self.gridView addSubview:cardView];
             cardsRemaining--;
         }
     }
+    
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
 }
 
 @end

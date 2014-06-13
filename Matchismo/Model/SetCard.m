@@ -31,6 +31,11 @@
     return @[@1,@2,@3];
 }
 
++ (NSUInteger)maxNumber
+{
+    return [[self validNumbers] count];
+}
+
 - (void)setNumber:(NSUInteger)number
 {
     if ([[SetCard validNumbers] containsObject:[NSNumber numberWithUnsignedInteger:number]]) {
