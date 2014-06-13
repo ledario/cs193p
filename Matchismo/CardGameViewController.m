@@ -17,6 +17,7 @@
 @interface CardGameViewController ()
 @property (strong, nonatomic) CardMatchingGame *game;
 @property (nonatomic) NSUInteger cardCount;
+@property (strong, nonatomic) NSArray *listOfCardsSelected;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIView *gridView;
@@ -24,76 +25,127 @@
 
 @implementation CardGameViewController
 
-- (CardMatchingGame *)game
-{
+- (CardMatchingGame *)game {
     if (!_game) _game = [[CardMatchingGame alloc] initWithCardCount:self.cardCount
                                                           usingDeck:[self createDeck]];
     return _game;
 }
 
-- (NSUInteger)cardCount
-{
+- (NSUInteger)cardCount {
     return _cardCount = CARD_COUNT;
-}
-
-- (Deck *)createDeck
-{
-    return nil; // Abstract method to be implemented in concrete class
 }
 
 #pragma mark - Actions
 
 - (IBAction)reset:(UIButton *)sender {
     self.game = nil;
-    
+    [self cleanup];
     [self updateUI];
 }
 
-- (IBAction)touchCardButton:(UIButton *)sender
-{
+- (IBAction)touchCardButton:(UIButton *)sender {
     int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
     [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 
+#pragma mark - Utility methods
+
+- (Deck *)createDeck {
+    return nil; // Abstract method to be implemented in concrete class
+}
+
+- (NSArray *)listOfSelectedCards {
+    NSMutableArray *listOfSelectedCards = [[NSMutableArray alloc] init];
+    for (NSUInteger index = 0; index < self.cardCount; index++) {
+        Card *card = [self.game cardAtIndex:index];
+        if (card.isChosen) {
+            [listOfSelectedCards addObject:card];
+        }
+    }
+    return [listOfSelectedCards copy];
+}
+
 #pragma mark - Delegate callback
 
-- (void)cardHasBeenFlipped:(CardView *)cardView
-{
+- (void)cardHasBeenFlipped:(CardView *)cardView {
     Card *card = (Card *)cardView.card;
-//    card.chosen = !card.isChosen;
     
     [self.game chooseCard:card];
-//    [self updateUI];
 }
+
+- (void)cardViewWillFlip:(CardView *)cardView {
+    self.listOfCardsSelected = [self listOfSelectedCards];
+    Card *card = (Card *)cardView.card;
+    [self.game chooseCard:card];
+}
+
+- (void)cardViewHasFlipped:(CardView *)cardViewSender {
+    
+    NSMutableArray *listOfCardViews = [[NSMutableArray alloc] init];
+    
+    for (id cardView in self.gridView.subviews) {
+        if ([cardView isKindOfClass:[CardView class]]) {
+            Card *card = ((CardView *)cardView).card;
+            if ([self.listOfCardsSelected containsObject:card]) {
+                [listOfCardViews addObject:cardView];
+            }
+        }
+    }
+    
+    [listOfCardViews enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        
+        //        [UIView animateWithDuration:3
+        //                              delay:3
+        //                            options:UIViewAnimationOptionLayoutSubviews
+        //                         animations:^{
+        //                             [UIView transitionWithView:obj
+        //                                               duration:0
+        //                                                options:UIViewAnimationOptionTransitionCrossDissolve
+        //                                             animations:^{}
+        //                                             completion:^(BOOL finished){}];
+        //                         }
+        //                         completion:^(BOOL finished){}];
+        
+        [UIView transitionWithView:obj
+                          duration:3
+                           options:UIViewAnimationOptionTransitionCrossDissolve
+                        animations:^{}
+                        completion:^(BOOL finished){}];
+        
+        [obj setNeedsDisplay];
+    }];
+    
+    [self updateScore];
+}
+
 
 #pragma mark - Draw UI
 
--(void)viewWillLayoutSubviews
-{
+-(void)viewWillLayoutSubviews {
     [self cleanup];
 }
 
-- (void)viewDidLayoutSubviews
-{
+- (void)viewDidLayoutSubviews {
     [self updateUI];
 }
 
-- (void)cleanup
-{
+- (void)cleanup {
     for (CardView *cardView in self.gridView.subviews) {
         [cardView removeFromSuperview];
     }
 }
 
+- (void)updateScore {
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+}
+
 // Replace with specific card in concrete class
-- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame
-{
+- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame {
     return nil; // Abstract method to be implemented in concrete class
 }
 
-- (void)updateUI
-{
+- (void)updateUI {
     Grid *grid = [[Grid alloc] init];
     grid.size = self.gridView.bounds.size;
     grid.cellAspectRatio = CARD_ASPECT_RATIO;
@@ -116,7 +168,8 @@
         }
     }
     
-    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+    //self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+    [self updateScore];
 }
 
 @end

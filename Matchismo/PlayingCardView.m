@@ -31,8 +31,7 @@
 #pragma mark - Initialization
 
 // Designated Initializer
-- (instancetype)initWithCard:(Card *)card andFrame:(CGRect)frame
-{
+- (instancetype)initWithCard:(Card *)card andFrame:(CGRect)frame {
     self = [super initWithCard:card andFrame:frame];
     if (![card isKindOfClass:[PlayingCard class]]) {
         self = nil;
@@ -42,28 +41,21 @@
 
 #pragma mark - Drawing
 
-- (void)pushContext
-{
+- (void)pushContext {
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
 }
 
-- (void)popContext
-{
+- (void)popContext {
     CGContextRestoreGState(UIGraphicsGetCurrentContext());
 }
 
-- (void)pushContextAndRotateUpsideDown
-{
+- (void)pushContextAndRotateUpsideDown {
     [self pushContext];
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextTranslateCTM(context, self.bounds.size.width, self.bounds.size.height);
     CGContextRotateCTM(context, M_PI);
 }
-
-//- (void)drawCardBase {
-//    
-//}
 
 - (void)drawCardContent {
     // Draw card shape
@@ -82,15 +74,13 @@
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
+- (void)drawRect:(CGRect)rect {
     [self drawCardContent];
 }
 
 #pragma mark - Draw Contents
 
-- (void)drawContentsInRect:(CGRect)contentsRect
-{
+- (void)drawContentsInRect:(CGRect)contentsRect {
     PlayingCard *playingCard = (PlayingCard *)self.card;
     UIImage *faceImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@%@", [playingCard rankAsString], playingCard.suit]];
     if (faceImage) {
@@ -103,8 +93,7 @@
 
 #pragma mark - Draw Corners
 
-- (void)drawCornersWithText:(NSString *)cornerText
-{
+- (void)drawCornersWithText:(NSString *)cornerText {
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.alignment = NSTextAlignmentCenter;
     
@@ -123,8 +112,7 @@
     [self popContext];
 }
 
-- (void)drawCorners
-{
+- (void)drawCorners {
     PlayingCard *playingCard = (PlayingCard *)self.card;    
     [self drawCornersWithText:[NSString stringWithFormat:@"%@\n%@", [playingCard rankAsString], playingCard.suit]];
 }
@@ -136,8 +124,7 @@
 #define PIP_VOFFSET2_PERCENTAGE 0.175
 #define PIP_VOFFSET3_PERCENTAGE 0.270
 
-- (void)drawPips
-{
+- (void)drawPips {
     PlayingCard *playingCard = (PlayingCard *)self.card;
     if ((playingCard.rank == 1) || (playingCard.rank == 5) || (playingCard.rank == 9) || (playingCard.rank == 3)) {
         [self drawPipsWithHorizontalOffset:0

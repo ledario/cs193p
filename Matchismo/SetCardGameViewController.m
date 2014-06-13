@@ -13,14 +13,12 @@
 
 @implementation SetCardGameViewController
 
-- (Deck *)createDeck
-{
+- (Deck *)createDeck {
     Deck *deck = [[SetCardDeck alloc] init];
     return deck;
 }
 
-- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame
-{
+- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame {
     return [[SetCardView alloc] initWithCard:card andFrame:frame];
 }
 
@@ -33,8 +31,7 @@
     [button setAttributedTitle:title forState:UIControlStateNormal];
 }
 
-- (NSAttributedString *)attributedTitleforCard:(SetCard *)card
-{
+- (NSAttributedString *)attributedTitleforCard:(SetCard *)card {
     //Set symbol
     NSString *cardSymbol = @"?";
     if ([card.symbol isEqualToString:@"diamond"]) {

@@ -24,8 +24,7 @@
 #pragma mark - Initialization
 
 // Designated Initializer
-- (instancetype)initWithCard:(Card *)card andFrame:(CGRect)frame
-{
+- (instancetype)initWithCard:(Card *)card andFrame:(CGRect)frame {
     self = [super initWithCard:card andFrame:frame];
     if (![card isKindOfClass:[SetCard class]]) {
         self = nil;
@@ -35,21 +34,18 @@
 
 #pragma mark - Drawing
 
-- (void)pushContext
-{
+- (void)pushContext {
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSaveGState(context);
 }
 
-- (void)popContext
-{
+- (void)popContext {
     CGContextRestoreGState(UIGraphicsGetCurrentContext());
 }
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
+- (void)drawRect:(CGRect)rect {
     // Draw card shape
     [super drawRect:rect];
     
@@ -58,8 +54,6 @@
                                    self.bounds.size.width * (1.0 - self.faceCardScaleFactor),
                                    self.bounds.size.height * (1.0 - self.faceCardScaleFactor));
     if (self.faceUp) {
-//        [self drawContentsInRect:imageRect];
-//        [self drawContentsInRect:self.bounds];
         [self drawSymbols];
     } else {
         [[UIImage imageNamed:@"cardback"] drawInRect:imageRect];
@@ -68,8 +62,7 @@
 
 #pragma mark - Draw Contents
 
-- (void)drawContentsInRect:(CGRect)contentsRect
-{
+- (void)drawContentsInRect:(CGRect)contentsRect {
     SetCard *setCard = (SetCard *)self.card;
     
     NSUInteger maxNumber = [SetCard maxNumber];
@@ -88,10 +81,7 @@
     }
 }
 
-- (void)drawSquiggleInRect:(CGRect)rect
-{
-//    SetCard *setCard = (SetCard *)self.card;
-
+- (void)drawSquiggleInRect:(CGRect)rect {
     // Save drawing context
     [self pushContext];
     
@@ -131,8 +121,7 @@
 #define SYMBOL_OFFSET 0.2;
 #define SYMBOL_LINE_WIDTH 0.02;
 
-- (void)drawSymbols
-{
+- (void)drawSymbols {
     SetCard *setCard = (SetCard *)self.card;
     [[self uiColor] setStroke];
     CGPoint point = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
@@ -154,8 +143,7 @@
     }
 }
 
-- (UIColor *)uiColor
-{
+- (UIColor *)uiColor {
     SetCard *setCard = (SetCard *)self.card;
     if ([setCard.color isEqualToString:@"red"]) return [UIColor redColor];
     if ([setCard.color isEqualToString:@"green"]) return [UIColor greenColor];
@@ -163,8 +151,7 @@
     return nil;
 }
 
-- (void)drawSymbolAtPoint:(CGPoint)point
-{
+- (void)drawSymbolAtPoint:(CGPoint)point {
     SetCard *setCard = (SetCard *)self.card;
     
     if ([setCard.symbol isEqualToString:@"oval"])
@@ -177,8 +164,8 @@
 
 #define OVAL_WIDTH 0.12
 #define OVAL_HEIGHT 0.4
-- (void)drawOvalAtPoint:(CGPoint)point;
-{
+
+- (void)drawOvalAtPoint:(CGPoint)point; {
     CGFloat dx = self.bounds.size.width * OVAL_WIDTH / 2;
     CGFloat dy = self.bounds.size.height * OVAL_HEIGHT / 2;
     UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(point.x - dx, point.y - dy, 2 * dx, 2 * dy)
@@ -191,8 +178,8 @@
 #define SQUIGGLE_WIDTH 0.12
 #define SQUIGGLE_HEIGHT 0.3
 #define SQUIGGLE_FACTOR 0.8
-- (void)drawSquiggleAtPoint:(CGPoint)point;
-{
+
+- (void)drawSquiggleAtPoint:(CGPoint)point; {
     CGFloat dx = self.bounds.size.width * SQUIGGLE_WIDTH / 2;
     CGFloat dy = self.bounds.size.height * SQUIGGLE_HEIGHT / 2;
     CGFloat dsqx = dx * SQUIGGLE_FACTOR;
@@ -216,8 +203,8 @@
 
 #define DIAMOND_WIDTH 0.15
 #define DIAMOND_HEIGHT 0.4
-- (void)drawDiamondAtPoint:(CGPoint)point;
-{
+
+- (void)drawDiamondAtPoint:(CGPoint)point; {
     CGFloat dx = self.bounds.size.width * DIAMOND_WIDTH / 2;
     CGFloat dy = self.bounds.size.height * DIAMOND_HEIGHT / 2;
     UIBezierPath *path = [[UIBezierPath alloc] init];
@@ -233,8 +220,8 @@
 
 #define STRIPES_OFFSET 0.06
 #define STRIPES_ANGLE 5
-- (void)shadePath:(UIBezierPath *)path
-{
+
+- (void)shadePath:(UIBezierPath *)path {
         SetCard *setCard = (SetCard *)self.card;
 
     if ([setCard.shading isEqualToString:@"solid"]) {

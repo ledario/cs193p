@@ -18,13 +18,11 @@
 
 @implementation CardView
 
-- (BOOL)isFaceUp
-{
+- (BOOL)isFaceUp {
     return self.card.isChosen;
 }
 
-- (void)setFaceUp:(BOOL)faceUp
-{
+- (void)setFaceUp:(BOOL)faceUp {
     self.card.chosen = faceUp;
 }
 
@@ -37,28 +35,24 @@
 
 #pragma mark - Initialization
 
-- (void)setUp
-{
+- (void)setUp {
     self.backgroundColor = nil;
     self.opaque = NO;
     self.contentMode = UIViewContentModeRedraw;
 }
 
-- (void)awakeFromNib
-{
+- (void)awakeFromNib {
     [self setUp];
 }
 
 // Override
 // Disable the inherited designated initializer
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame {
     return nil;
 }
 
 // Designated Initializer
-- (instancetype)initWithCard:(Card *)card andFrame:(CGRect)frame
-{
+- (instancetype)initWithCard:(Card *)card andFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         self.card = card;
@@ -69,29 +63,27 @@
 
 #pragma mark - Gesture Handling
 
-- (void)tapCard:(UITapGestureRecognizer *)gesture
-{
-    if (gesture.state == UIGestureRecognizerStateEnded) {
-        __weak CardView *weakSelf = self;
-        
-        [UIView transitionWithView:self
-                          duration:1.0
-                           options:UIViewAnimationOptionTransitionFlipFromLeft
-//                        animations:^{ weakSelf.faceUp = YES; }
-                        animations:^{ [weakSelf.delegate cardHasBeenFlipped:weakSelf]; }
-                        completion:nil
-//                        completion:^(BOOL finished){ [weakSelf.delegate cardHasBeenFlipped:weakSelf]; }
-         ];
-        
-//        [self.delegate cardHasBeenFlipped:self];
+- (void)tapCard:(UITapGestureRecognizer *)gesture {
+    if (!self.card.isMatched) {
+        if (gesture.state == UIGestureRecognizerStateEnded) {
+            __weak CardView *weakSelf = self;
+            [UIView transitionWithView:self
+                              duration:0.5
+                               options:UIViewAnimationOptionTransitionFlipFromLeft
+                            animations:^{ [weakSelf.delegate cardViewWillFlip:weakSelf]; }
+                            completion:^(BOOL finished){ [weakSelf.delegate cardViewHasFlipped:weakSelf]; }
+             ];
+        }
+        [self setNeedsDisplay];
     }
-    [self setNeedsDisplay];
 }
 
 #pragma mark - Drawing
 
-- (void)drawCardBase
-{
+- (void)drawCardBase {
+    if (self.card.isMatched) {
+        self.alpha = 0.8;
+    }
     // Drawing card shape
     UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:[self cornerRadius]];
     // Keep contents within card shape
@@ -107,8 +99,7 @@
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
+- (void)drawRect:(CGRect)rect {
     [self drawCardBase];
 }
 

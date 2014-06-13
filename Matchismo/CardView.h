@@ -13,7 +13,8 @@
 
 @protocol CardViewDelegate <NSObject>
 @optional
-- (void)cardHasBeenFlipped:(CardView *)cardView;
+- (void)cardViewWillFlip:(CardView *)cardView;
+- (void)cardViewHasFlipped:(CardView *)cardView;
 @end
 
 @interface CardView : UIView

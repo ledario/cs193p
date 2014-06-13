@@ -13,14 +13,12 @@
 
 @implementation PlayingCardGameViewController
 
-- (Deck *)createDeck
-{
+- (Deck *)createDeck {
     Deck *deck = [[PlayingCardDeck alloc] init];
     return deck;
 }
 
-- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame
-{
+- (CardView *)createCardViewWithCard:(Card *)card andFrame:(CGRect)frame {
     return [[PlayingCardView alloc] initWithCard:card andFrame:frame];
 }
 
